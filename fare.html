@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fare">
+<meta name="theme-color" content="#0F1419">
+<title>Fare</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f8a4c'/%3E%3Ctext x='32' y='40' font-family='Arial' font-weight='700' font-size='20' fill='%23fff' text-anchor='middle'%3ECHF%3C/text%3E%3C/svg%3E">
+<style>
+@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-400.woff2) format('woff2')}
+@font-face{font-family:Inter;font-style:normal;font-weight:500;font-display:swap;src:url(fonts/inter-500.woff2) format('woff2')}
+@font-face{font-family:Inter;font-style:normal;font-weight:600;font-display:swap;src:url(fonts/inter-600.woff2) format('woff2')}
+@font-face{font-family:Inter;font-style:normal;font-weight:700;font-display:swap;src:url(fonts/inter-700.woff2) format('woff2')}
+@font-face{font-family:Inter;font-style:normal;font-weight:800;font-display:swap;src:url(fonts/inter-800.woff2) format('woff2')}
+
+/*
+VOICE: a driver's tool: fast, calm, one hand on the phone
+IDEA: a taxi receipt being written: request on top, km lines, the total big
+PICTURE: the big total with its breakdown, under the request card
+COLOUR and TYPE: white, ink, signal green for accept, soft red for decline; system font
+LAYOUT: one column, thumb-reachable buttons at the bottom
+*/
+:root{color-scheme:light dark;--bg:light-dark(#E9EEF2,#0B0F13);--card:light-dark(#fff,#151B21);--ink:light-dark(#0F1419,#E9EEF2);--mute:light-dark(#5B6B7B,#9AA7B4);--line:light-dark(#D5DDE4,#26303A);--field:light-dark(#F5F7F9,#1B232B);--acc:light-dark(#2F4A63,#9FB4C7);--ok:#187A52;--no:light-dark(#B42318,#FF8A80)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Inter,-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;overflow-x:clip;padding-bottom:env(safe-area-inset-bottom)}
+header{background:#0F1419;color:#fff;padding:14px 16px 16px;display:flex;align-items:center;gap:10px}
+header b{font-size:20px;display:block}header span{color:#9AA7B4;font-size:14px}
+.lg{width:40px;height:40px;border-radius:10px;background:#fff;color:#0F1419;display:grid;place-items:center;font-weight:800;flex:none}
+.chb{width:18px;height:18px;vertical-align:-3px;margin-left:6px}
+main{max-width:560px;margin:0 auto;padding:12px;display:grid;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+h2{font-size:16px;margin:0 0 8px}
+.req{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:15px}
+.req dt{color:var(--mute)}.req dd{margin:0;overflow-wrap:anywhere}
+.empty{color:var(--mute);font-size:15px}
+textarea,input{width:100%;font:16px Inter,-apple-system,system-ui,sans-serif;color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;min-height:46px;outline:none}
+textarea{min-height:90px}
+input:focus,textarea:focus{border-color:var(--acc)}
+label{display:block;font-size:14px;color:var(--mute);font-weight:600;margin:12px 0 4px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.big input{font-size:24px;font-weight:700;min-height:56px}
+.tog{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--field)}
+.tog input{width:22px;height:22px;min-height:0;margin:0;flex:none;accent-color:var(--ok)}
+.tog span{font-weight:600}.tog small{display:block;color:var(--mute);font-weight:400;font-size:13px}
+.total{font-size:46px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bd{color:var(--mute);font-size:14px;white-space:pre-line;font-variant-numeric:tabular-nums}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border-radius:12px;border:0;font:700 17px Inter,-apple-system,system-ui,sans-serif;cursor:pointer;margin-top:10px}
+.btn.ok{background:var(--ok);color:#fff}.btn.no{background:none;border:1.5px solid var(--no);color:var(--no)}
+.btn.ghost{background:none;border:1.5px solid var(--line);color:var(--ink);min-height:46px;font-size:15px}
+.btn:disabled{opacity:.45}
+.links{display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:14px}
+.links a{color:var(--acc)}
+.msg{white-space:pre-line;font-size:14px;color:var(--mute);background:var(--field);border-radius:10px;padding:10px;margin-top:10px}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;margin-top:6px}
+.seg button{flex:1;min-height:44px;border:0;background:var(--field);color:var(--ink);font:600 16px Inter,-apple-system,system-ui,sans-serif;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--card)}
+.warn{color:var(--no);font-size:14px;margin:8px 0 0}
+.warn:empty{display:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="lg">AH</div><div><b>Fare <svg class="chb" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#C8102E"/><path d="M13 6h6v7h7v6h-7v7h-6v-7H6v-6h7z" fill="#fff"/></svg></b><span>Ahmed Holiel · privat</span></div></header>
+<main>
+  <section class="card" id="reqCard">
+    <h2>Request</h2>
+    <dl class="req" id="req"></dl>
+    <p class="empty" id="empty">No request loaded. Copy the WhatsApp message, then tap Paste.</p>
+    <button type="button" class="btn ghost" id="paste">Paste request</button>
+    <details id="manualBox"><summary style="font-size:14px;color:var(--mute);margin-top:8px;cursor:pointer">Paste by hand</summary>
+      <textarea id="manual" placeholder="Paste the WhatsApp message here"></textarea>
+      <button type="button" class="btn ghost" id="read">Read</button>
+    </details>
+    <p class="warn" id="reqWarn"></p>
+  </section>
+
+  <section class="card">
+    <div class="big"><label for="pick">Km to pickup</label><input id="pick" inputmode="decimal" placeholder="e.g. 12" autocomplete="off"></div>
+    <div class="row">
+      <div><label for="trip">Trip km</label><input id="trip" inputmode="decimal"></div>
+      <div><label for="back">Way back km</label><input id="back" inputmode="decimal"></div>
+    </div>
+    <label class="tog"><input type="checkbox" id="hot"><span>Drop-off in hot zone<small id="hotTxt">Way back counts 0 km</small></span></label>
+    <div class="row">
+      <div><label for="bags">Bags (CHF 3)</label><input id="bags" inputmode="numeric" value="0"></div>
+      <div><label for="seats">Child seats (CHF 3)</label><input id="seats" inputmode="numeric" value="0"></div>
+    </div>
+    <label class="tog"><input type="checkbox" id="wc"><span>Wheelchair<small>+ CHF 3</small></span></label>
+  </section>
+
+  <section class="card">
+    <div class="total" id="total">CHF –</div>
+    <div class="bd" id="bd">Type the km to pickup.</div>
+    <label>Reply language</label>
+    <div class="seg" role="group" aria-label="Reply language"><button type="button" id="lgDE" aria-pressed="true">Deutsch</button><button type="button" id="lgEN" aria-pressed="false">English</button></div>
+    <label for="price">Price to send</label>
+    <input id="price" inputmode="decimal">
+    <button type="button" class="btn ok" id="accept">✓ Accept – send price</button>
+    <button type="button" class="btn no" id="decline">✕ Not available</button>
+    <div class="links"><a href="#" id="smsOk">Accept by SMS</a><a href="#" id="smsNo">Decline by SMS</a></div>
+    <p class="warn" id="sendWarn"></p>
+    <div class="msg" id="preview"></div>
+  </section>
+</main>
+
+<script>
+{
+const RATE = 1.33, MIN_FARE = 10, FEE = 3;
+const BOOK = 'https://ahmedholiel-rgb.github.io/booking/';
+const BASEL = {lat:47.5582, lon:7.5878}, EAP = {lat:47.5964, lon:7.5291};
+const ZONE_R = 3.0, ROAD = 1.3;
+const HOT_PLZ = [4030,4102,4103,4123,4125,4126,4127,4132,4142,4153];
+const $ = id => document.getElementById(id);
+let req = null, autoBack = NaN, replyLang = 'DE';
+function setLang(l){ replyLang=l; $('lgDE').setAttribute('aria-pressed',String(l==='DE')); $('lgEN').setAttribute('aria-pressed',String(l==='EN')); preview(); }
+
+function num(v){ if (v==null) return NaN; const t=String(v).trim().replace(',','.'); if(!t) return NaN; const n=Number(t); return (isFinite(n)&&n>=0)?n:NaN; }
+function hav(a,b){ const r=Math.PI/180,dl=(b.lat-a.lat)*r,dn=(b.lon-a.lon)*r; const x=Math.sin(dl/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)**2; return 2*6371*Math.asin(Math.sqrt(x)); }
+const r1 = v => Math.round(v*10)/10;
+const chf = v => v.toFixed(2);
+
+function parse(text){
+  const r = {name:'',phone:'',date:'',time:'',from:'',to:'',lang:'DE',pax:'',bags:0,seats:0,wc:false,note:'',km:NaN,min:NaN,dest:null,plz:0,foreign:false};
+  (text||'').replace(/\r/g,'').split('\n').forEach(raw=>{
+    const line = raw.trim(), c = line.indexOf(':');
+    if (c<=0) return;
+    const k = line.slice(0,c).trim().toLowerCase(), v = line.slice(c+1).trim();
+    if (k==='name') r.name=v;
+    else if (k==='telefon'||k==='phone') r.phone=v;
+    else if (k==='datum'||k==='date') r.date=v;
+    else if (k==='zeit'||k==='time') r.time=v;
+    else if (k==='personen') r.pax=v;
+    else if (k==='gepäck'||k==='gepack') r.bags=parseInt(v,10)||0;
+    else if (k==='kindersitze'||k==='kindersitz') { let n=0; (v.match(/(\d+)\s*[×x]/g)||[]).forEach(m=>n+=parseInt(m,10)||0); if(!n) n=parseInt(v,10)||0; r.seats=n; }
+    else if (k==='rollstuhl'||k==='wheelchair') r.wc=/^(j|y)/i.test(v);
+    else if (k==='von'||k==='from') r.from=v;
+    else if (k==='nach'||k==='to') r.to=v;
+    else if (k==='bemerkung') r.note=v;
+    else if (k==='sprache') r.lang=/^en/i.test(v)?'EN':'DE';
+    else if (k==='strecke') { const m=v.match(/([0-9]+(?:[.,][0-9]+)?)\s*km/i); if(m) r.km=num(m[1]); const mm=v.match(/(\d+)\s*Min/i); if(mm) r.min=+mm[1]; }
+    else if (k==='karte'||k==='route') { const m=v.match(/destination=(-?[0-9.]+),(-?[0-9.]+)/); if(m) r.dest={lat:+m[1],lon:+m[2]}; }
+  });
+  const pm = [...r.to.matchAll(/(?<![0-9.])([0-9]{4,5})(?=\s+\p{L})/gu)];
+  if (pm.length) r.plz = +pm[pm.length-1][1];
+  r.foreign = /france|frankreich|deutschland|germany|, fr$|, de$/i.test(r.to);
+  return r;
+}
+function inHot(r){
+  if (r.dest && hav(r.dest,EAP) < 1.5) return true;
+  if (!r.foreign && r.plz) return (r.plz>=4001 && r.plz<=4059) || HOT_PLZ.includes(r.plz);
+  if (r.dest) return hav(r.dest,BASEL)*ROAD <= ZONE_R+1.5;
+  return false;
+}
+function wayBack(r){
+  if (inHot(r)) return 0;
+  if (!r.dest) return NaN;
+  return r1(Math.max(0, hav(r.dest,BASEL)*ROAD - ZONE_R));
+}
+
+function load(text){
+  const r = parse(text);
+  if (!r.to && isNaN(r.km)) { $('reqWarn').textContent='This does not look like a booking request.'; return; }
+  req = r; $('reqWarn').textContent='';
+  const rows = [['Name',r.name],['Phone',r.phone],['When',(r.date+'  '+r.time).trim()],['People',r.pax],['From',r.from],['To',r.to],
+    ['Trip', isNaN(r.km)?'':r.km.toFixed(1)+' km'+(isNaN(r.min)?'':' / '+r.min+' min')],
+    ['Extras',[r.bags?r.bags+' bag'+(r.bags>1?'s':''):'',r.seats?r.seats+' child seat'+(r.seats>1?'s':''):'',r.wc?'wheelchair':''].filter(Boolean).join(', ')],
+    ['Note',r.note]].filter(x=>x[1]);
+  const dl = $('req'); dl.textContent='';
+  rows.forEach(([k,v])=>{ const dt=document.createElement('dt'); dt.textContent=k; const dd=document.createElement('dd'); dd.textContent=v; dl.append(dt,dd); });
+  $('empty').hidden = true;
+  $('trip').value = isNaN(r.km)?'':r.km.toFixed(1);
+  const hot = inHot(r); autoBack = wayBack(r);
+  $('hot').checked = hot;
+  $('back').value = hot ? '0' : (isNaN(autoBack)?'':autoBack.toFixed(1));
+  $('bags').value = r.bags; $('seats').value = r.seats; $('wc').checked = r.wc;
+  $('pick').value = '';
+  setLang(r.lang==='EN'?'EN':'DE');
+  hotText(); calc();
+  setTimeout(()=>$('pick').focus(),150);
+}
+function hotText(){
+  $('hotTxt').textContent = $('hot').checked ? 'Way back counts 0 km'
+    : (isNaN(autoBack) ? 'Outside: type the km back to the hot zone' : 'Outside: about '+autoBack.toFixed(1)+' km back (estimate)');
+}
+
+let priceTouched = false;
+function calc(){
+  const p=num($('pick').value), t=num($('trip').value);
+  let b=num($('back').value); if ($('hot').checked && isNaN(b)) b=0;
+  const bags=Math.min(20,Math.round(num($('bags').value)||0)), seats=Math.min(10,Math.round(num($('seats').value)||0)), wc=$('wc').checked;
+  if (isNaN(p)||isNaN(t)||isNaN(b)) {
+    $('total').textContent='CHF –'; $('bd').textContent = isNaN(p)?'Type the km to pickup.':'Fill in all km.';
+    if(!priceTouched) $('price').value=''; preview(); return;
+  }
+  const km = r1(p+t+b);
+  const kmFare = Math.max(MIN_FARE, Math.ceil(RATE*(p+t+b)*2-1e-9)/2);
+  const extras = bags*FEE + seats*FEE + (wc?FEE:0);
+  const total = kmFare + extras;
+  let bd = p.toFixed(1)+' + '+t.toFixed(1)+' + '+b.toFixed(1)+' = '+km.toFixed(1)+' km × 1.33';
+  bd += (RATE*km < MIN_FARE) ? '  →  minimum CHF 10' : ' = CHF '+chf(kmFare);
+  if (bags) bd += '\n+ '+bags+' bag'+(bags>1?'s':'')+' × 3 = CHF '+chf(bags*FEE);
+  if (seats) bd += '\n+ '+seats+' child seat'+(seats>1?'s':'')+' × 3 = CHF '+chf(seats*FEE);
+  if (wc) bd += '\n+ wheelchair CHF 3.00';
+  $('total').textContent = 'CHF '+chf(total); $('bd').textContent = bd;
+  if (!priceTouched) $('price').value = chf(total);
+  preview();
+}
+['pick','trip','back','bags','seats'].forEach(id=>$(id).addEventListener('input',()=>{ priceTouched=false; calc(); }));
+['wc'].forEach(id=>$(id).addEventListener('change',()=>{ priceTouched=false; calc(); }));
+$('hot').addEventListener('change',()=>{ $('back').value = $('hot').checked ? '0' : (isNaN(autoBack)?'':autoBack.toFixed(1)); hotText(); priceTouched=false; calc(); });
+$('price').addEventListener('input',()=>{ priceTouched=true; preview(); });
+
+function priceNow(){ const v=num($('price').value); return isNaN(v)?null:chf(v); }
+function acceptMsg(){
+  const r=req||{}, en=replyLang==='EN', pr=priceNow(), name=r.name?' '+r.name:'';
+  if (en) return 'Hello'+name+',\n\nthank you for your request. Your ride'+(r.date?' on '+r.date:'')+(r.time?' at '+r.time:'')+' from '+(r.from||'')+' to '+(r.to||'')+' costs CHF '+pr+'.\nPayment: TWINT to 076 467 22 93 or cash.\n\nPlease reply "Yes" to confirm the booking.\n\nKind regards\nAhmed Holiel\n\nBook directly next time: '+BOOK;
+  return 'Guten Tag'+name+'\n\nVielen Dank für Ihre Anfrage. Ihre Fahrt'+(r.date?' am '+r.date:'')+(r.time?' um '+r.time:'')+' von '+(r.from||'')+' nach '+(r.to||'')+' kostet CHF '+pr+'.\nZahlung: TWINT an 076 467 22 93 oder bar.\n\nBitte bestätigen Sie die Buchung mit «Ja».\n\nFreundliche Grüsse\nAhmed Holiel\n\nNächstes Mal direkt buchen: '+BOOK;
+}
+function declineMsg(){
+  const r=req||{}, en=replyLang==='EN', name=r.name?' '+r.name:'';
+  if (en) return 'Hello'+name+',\n\nthank you for your request. Sorry, there are no pickups available'+(r.date?' on '+r.date:'')+(r.time?' at '+r.time:'')+'.\n\nKind regards\nAhmed Holiel\n\nAnother time? Book here: '+BOOK;
+  return 'Guten Tag'+name+'\n\nVielen Dank für Ihre Anfrage. Leider habe ich'+(r.date?' am '+r.date:'')+(r.time?' um '+r.time:'')+' keine Fahrt frei.\n\nFreundliche Grüsse\nAhmed Holiel\n\nGerne ein anderes Mal: '+BOOK;
+}
+function preview(){ $('preview').textContent = (req && priceNow()) ? acceptMsg() : ''; $('accept').disabled = !(req && priceNow()); $('decline').disabled = !req; }
+function digits(phone){
+  let s=(phone||'').replace(/[^0-9+]/g,''); if(s.startsWith('00')) s='+'+s.slice(2); if(/^0\d{9}$/.test(s)) s='+41'+s.slice(1);
+  return /^\+\d{9,15}$/.test(s) ? s.slice(1) : '';
+}
+const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+function send(text, sms){
+  if (!req) return;
+  const d = digits(req.phone);
+  if (!d) { $('sendWarn').textContent='No valid phone number in the request.'; return; }
+  $('sendWarn').textContent='';
+  location.href = sms ? 'sms:+'+d+(isIOS?'&':'?')+'body='+encodeURIComponent(text) : 'https://wa.me/'+d+'?text='+encodeURIComponent(text);
+}
+$('accept').addEventListener('click',()=>{ if(priceNow()) send(acceptMsg(),false); });
+$('decline').addEventListener('click',()=>send(declineMsg(),false));
+$('smsOk').addEventListener('click',e=>{ e.preventDefault(); if(priceNow()) send(acceptMsg(),true); });
+$('smsNo').addEventListener('click',e=>{ e.preventDefault(); send(declineMsg(),true); });
+
+$('paste').addEventListener('click', async ()=>{
+  try { const t = await navigator.clipboard.readText(); if (t && t.trim()) { load(t); return; } } catch(e) {}
+  $('manualBox').open = true; $('manual').focus();
+  $('reqWarn').textContent = 'Could not read the clipboard. Paste the message below.';
+});
+$('read').addEventListener('click',()=>load($('manual').value));
+$('lgDE').addEventListener('click',()=>setLang('DE'));
+$('lgEN').addEventListener('click',()=>setLang('EN'));
+
+// text handed over by the iPhone shortcut: fare.html#t=<url-encoded text>
+function fromHash(){
+  const h = location.hash;
+  if (h.startsWith('#t=')) {
+    let t=''; try { t = decodeURIComponent(h.slice(3)); } catch(e) { t = h.slice(3); }
+    history.replaceState(null,'',location.pathname);
+    if (t.trim()) load(t);
+  }
+}
+window.addEventListener('hashchange', fromHash);
+fromHash(); preview();
+window.__fare = {parse, inHot, wayBack};
+}
+</script>
+</body>
+</html>
